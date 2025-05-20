@@ -47,7 +47,7 @@ export default function AddProduct() {
 
     await addProduct(data);
     alert('Product added successfully!');
-    navigate('/categories');
+    navigate('/add-product');
   };
 
   return (

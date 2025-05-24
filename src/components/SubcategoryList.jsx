@@ -34,7 +34,7 @@ export default function SubcategoryList() {
 
   return (
     <div style={{ padding: '1rem' }}>
-      <h2>Brands / Subcategories</h2>
+      <h2>Gender / Subcategories</h2>
       <ul>
         {subs.map(s => (
           <li key={s._id} style={{ margin: '0.5rem 0' }}>
@@ -52,7 +52,7 @@ export default function SubcategoryList() {
         <input
           value={newSub}
           onChange={e => setNewSub(e.target.value)}
-          placeholder="New brand"
+          placeholder="Gender"
           style={{ marginRight: '0.5rem' }}
         />
         <button onClick={add}>Add</button>

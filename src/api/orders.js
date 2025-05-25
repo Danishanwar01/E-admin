@@ -2,13 +2,13 @@
 
 // (1) Fetch all orders for the admin:
 export function fetchOrders() {
-  return fetch('http://localhost:5000/api/orders/admin/all')
+  return fetch('https://e-backend-rf04.onrender.com/api/orders/admin/all')
     .then(res => res.json());
 }
 
 // (2) Push a new tracking event for a given order:
 export function addTrackingEvent(orderId, { status, message, courierPartner, trackingNumber }) {
-  return fetch(`http://localhost:5000/api/orders/${orderId}/tracking`, {
+  return fetch(`https://e-backend-rf04.onrender.com/api/orders/${orderId}/tracking`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ status, message, courierPartner, trackingNumber })

@@ -115,7 +115,7 @@ export default function OrdersPage() {
                     <li key={idx} style={{ marginBottom: "0.5rem" }}>
                       {p.images?.[0] && (
                         <img
-                          src={`http://localhost:5000${p.images[0]}`}
+                          src={`https://e-backend-rf04.onrender.com${p.images[0]}`}
                           alt={p.title}
                           style={{
                             width: 40,

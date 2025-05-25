@@ -48,7 +48,7 @@ export default function CartsPage() {
                     {/* thumbnail */}
                     {p.images?.[0] && (
                       <img
-                        src={`http://localhost:5000${p.images[0]}`}
+                        src={`https://e-backend-rf04.onrender.com${p.images[0]}`}
                         alt={p.title}
                         style={{
                           width: 32,

@@ -114,7 +114,7 @@ export default function AllProductData() {
                 <td style={td}>
                   {img && (
                     <img
-                      src={`http://localhost:5000${img}`}
+                      src={`https://e-backend-rf04.onrender.com${img}`}
                       alt={p.title}
                       style={{ width: '60px', height: '60px', objectFit: 'cover' }}
                     />

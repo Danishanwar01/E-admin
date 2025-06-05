@@ -1,7 +1,7 @@
-
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { fetchCategories } from '../api/categories';
-import { fetchProducts }   from '../api/products';
+import { fetchProducts, deleteProduct } from '../api/products'; // import deleteProduct
 
 export default function AllProductData() {
   const [categories, setCategories]       = useState([]);
@@ -10,14 +10,20 @@ export default function AllProductData() {
   const [filtered, setFiltered]           = useState([]);
   const [selCat, setSelCat]               = useState('');
   const [selSub, setSelSub]               = useState('');
+  const [loading, setLoading]             = useState(false);
+  const navigate = useNavigate();
 
   // 1) Load initial data
   useEffect(() => {
-    fetchCategories().then(res => setCategories(res.data));
-    fetchProducts().then(res => {
-      setProducts(res.data);
-      setFiltered(res.data);
-    });
+    setLoading(true);
+    Promise.all([
+      fetchCategories(),
+      fetchProducts()
+    ]).then(([catRes, prodRes]) => {
+      setCategories(catRes.data);
+      setProducts(prodRes.data);
+      setFiltered(prodRes.data);
+    }).finally(() => setLoading(false));
   }, []);
 
   // 2) When category changes, pick subcats from the loaded categories
@@ -48,11 +54,36 @@ export default function AllProductData() {
     setFiltered(tmp);
   }, [selCat, selSub, products]);
 
+  // Handler for Delete
+  const handleDelete = async (productId) => {
+    if (!window.confirm('Are you sure you want to delete this product?')) return;
+    try {
+      setLoading(true);
+      await deleteProduct(productId);
+      // Remove the deleted product from local state:
+      setProducts(prev => prev.filter(p => p._id !== productId));
+      setFiltered(prev => prev.filter(p => p._id !== productId));
+    } catch (err) {
+      console.error('Failed to delete product:', err);
+      alert('Failed to delete. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Handler for Edit
+  const handleEdit = (productId) => {
+    // Navigate to your edit page (adjust the route as needed)
+    navigate(`/admin/product/edit/${productId}`);
+  };
+
   return (
     <div style={{ padding: '1rem' }}>
       <h2>All Products</h2>
 
-       {/* Filters  */}
+      {loading && <p>Loading...</p>}
+
+      {/* Filters  */}
       <div style={{ margin: '1rem 0', display: 'flex', gap: '1rem' }}>
         <select value={selCat} onChange={e => setSelCat(e.target.value)}>
           <option value="">-- All Categories --</option>
@@ -87,6 +118,7 @@ export default function AllProductData() {
             <th style={th}>Category</th>
             <th style={th}>Subcategory</th>
             <th style={th}>Created At</th>
+            <th style={th}>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -132,6 +164,20 @@ export default function AllProductData() {
                   {new Date(p.createdAt).toLocaleDateString()}{' '}
                   {new Date(p.createdAt).toLocaleTimeString()}
                 </td>
+                <td style={td}>
+                  <button
+                    onClick={() => handleEdit(p._id)}
+                    style={actionButton}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(p._id)}
+                    style={{ ...actionButton, marginLeft: '0.5rem', background: '#e74c3c' }}
+                  >
+                    Delete
+                  </button>
+                </td>
               </tr>
             );
           })}
@@ -142,5 +188,23 @@ export default function AllProductData() {
 }
 
 // Inline table styles
-const th = { border: '1px solid #ddd', padding: '8px', background: '#f0f0f0' };
-const td = { border: '1px solid #ddd', padding: '8px' };
+const th = {
+  border: '1px solid #ddd',
+  padding: '8px',
+  background: '#f0f0f0',
+  textAlign: 'left',
+};
+
+const td = {
+  border: '1px solid #ddd',
+  padding: '8px',
+};
+
+const actionButton = {
+  padding: '4px 8px',
+  border: 'none',
+  borderRadius: '4px',
+  background: '#3498db',
+  color: 'white',
+  cursor: 'pointer',
+};
